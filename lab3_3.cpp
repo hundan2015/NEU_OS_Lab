@@ -19,11 +19,6 @@ union semun
 
 // static int sem_id = 0;
 
-static int set_semvalue();
-static void del_semvalue();
-static int semaphore_p();
-static int semaphore_v();
-
 /*信号量初始化函数*/
 int init_sem(int sem_id, int init_value)
 {
@@ -71,9 +66,15 @@ int main()
 {
     auto fp = new int[2];
     int sem1, sem2, mutex;
+    /**
+     * 首先创建三个不同的信号量。
+     */
     sem1 = semget((key_t)1234, 1, 0666 | IPC_CREAT);
     sem2 = semget((key_t)2345, 1, 0666 | IPC_CREAT);
     mutex = semget((key_t)1111, 1, 0666 | IPC_CREAT);
+    /**
+     * 对三个信号量做初始化。
+     */
     init_sem(sem1, 0);
     init_sem(sem2, 0);
     init_sem(mutex, 1);
@@ -90,17 +91,16 @@ int main()
     {
         // Main process.
         sem_p(sem1);
+        /**
+         * 用PV操作完成一个Mutex,保护互斥区不被其他人访问。
+         */
         cout << "Sem1 arrive.\n";
         sem_p(sem2);
         cout << "Sem2 arrive.\n";
-        // lockf(fp[0], 1, 0);
         sem_p(mutex);
         read(fp[0], buffer, sizeof(buffer));
         sem_v(mutex);
-        // lockf(fp[0], 0, 0);
         cout << buffer << endl;
-        /* read(fp[0], buffer, sizeof(buffer));
-        cout << buffer << endl; */
     }
     else
     {
@@ -110,8 +110,10 @@ int main()
         // cout << message;
         cout << getpid() << " need mutex\n";
         sem_p(mutex);
+        // 在这里管道资源就是访问的互斥区。
         write(fp[1], message, temp.size());
         sem_v(mutex);
+        // 判断是否为第二个进程。如果是第二个进程的话就要使用对应的信号量。
         if (f2 == 0)
         {
             sem_v(sem2);

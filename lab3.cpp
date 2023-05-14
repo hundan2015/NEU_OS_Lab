@@ -16,6 +16,9 @@ int main()
     auto f1 = fork();
     auto f2 = 0;
     char buffer[1000];
+    /**
+     * 如果f1不为0则证明其为主线程。
+     */
     if (f1 != 0)
     {
         f2 = fork();
@@ -26,6 +29,7 @@ int main()
         // Main process.
         wait(nullptr);
         wait(nullptr);
+        // 读取管道里的内容。
         read(fp[0], buffer, sizeof(buffer));
         cout << buffer << endl;
         /* read(fp[0], buffer, sizeof(buffer));
