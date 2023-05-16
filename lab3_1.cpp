@@ -9,20 +9,17 @@
 
 #include <iostream>
 using namespace std;
-int main()
-{
+int main() {
     auto fp = new int[2];
     auto the_pipe = pipe(fp);
     auto f1 = fork();
     auto f2 = 0;
     char buffer[1000];
-    if (f1 != 0)
-    {
+    if (f1 != 0) {
         f2 = fork();
     }
     cout << f1 + f2 << endl;
-    if (f1 > 0 && f2 > 0)
-    {
+    if (f1 > 0 && f2 > 0) {
         // Main process.
         lockf(fp[1], 1, 0);
         string temp = "Main message!" + to_string(getpid()) + " \n ";
@@ -33,9 +30,7 @@ int main()
         wait(nullptr);
         /* read(fp[0], buffer, sizeof(buffer));
         cout << buffer << endl; */
-    }
-    else
-    {
+    } else {
         lockf(fp[0], 1, 0);
         read(fp[0], buffer, sizeof(buffer));
         cout << "child " << getpid() << " get message:" << buffer;

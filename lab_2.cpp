@@ -7,12 +7,12 @@ using namespace std;
 const char produce = 'p';
 // 消费的指令。将物品从盘子内取出。
 const char take = 't';
-//结束指令。输入此指令将结束。
+// 结束指令。输入此指令将结束。
 const char dead = 'e';
 /**
  * @brief Plate类是一个互斥区的模拟类。
- * 
-*/
+ *
+ */
 class Plate {
     // 指定盘子的大小。这个量在运行时不可改变，只能在初始化盘子的时候定义
     const int size_ = 3;
@@ -35,7 +35,7 @@ class Plate {
      * @brief 处理放入盘子的事件。
      * @return 返回是否成功放入盘子。
      * @param target 放入的物品。
-    */
+     */
     bool Insert(char &target) {
         if (is_work_in_muti_) {
             // have_border.release();
@@ -53,7 +53,7 @@ class Plate {
     /**
      * @brief 返回盘子中的物品的方法。
      * @return 盘子中的物品。如果盘子为空的直接返回0。
-    */
+     */
     char Get() {
         if (is_work_in_muti_) {
             // empty_border.release();
@@ -79,7 +79,7 @@ int main() {
     while (command != dead) {
         switch (command) {
             case (produce): {
-                //为了更简洁地展示过程，我们直接使用字符E作为统一的产品。
+                // 为了更简洁地展示过程，我们直接使用字符E作为统一的产品。
                 char production = 'E';
                 bool result = plate.Insert(production);
                 if (result) {
@@ -99,8 +99,8 @@ int main() {
                 }
                 break;
             }
-            default:{
-                cout<<"No no no. What do you want?"<<endl;
+            default: {
+                cout << "No no no. What do you want?" << endl;
             }
         }
         cin >> command;

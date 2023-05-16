@@ -9,24 +9,23 @@
 
 #include <iostream>
 using namespace std;
-int main()
-{
+int main() {
     auto fp = new int[2];
     auto the_pipe = pipe(fp);
+    // 创建一个子线程
     auto f1 = fork();
     auto f2 = 0;
     char buffer[1000];
     /**
      * 如果f1不为0则证明其为主线程。
      */
-    if (f1 != 0)
-    {
+    if (f1 != 0) {
         f2 = fork();
     }
     cout << f1 + f2 << endl;
-    if (f1 > 0 && f2 > 0)
-    {
+    if (f1 > 0 && f2 > 0) {
         // Main process.
+        // 等待两个线程的内容
         wait(nullptr);
         wait(nullptr);
         // 读取管道里的内容。
@@ -34,9 +33,7 @@ int main()
         cout << buffer << endl;
         /* read(fp[0], buffer, sizeof(buffer));
         cout << buffer << endl; */
-    }
-    else
-    {
+    } else {
         lockf(fp[1], 1, 0);
         string temp = "child message!" + to_string(getpid()) + " \n";
         char *message = temp.data();
