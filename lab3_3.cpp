@@ -75,7 +75,7 @@ int main() {
     cout << "main!\n";
     auto the_pipe = pipe(fp);
     auto f1 = fork();
-    auto f2 = 0;
+    auto f2 = -1;
     char buffer[1000];
     if (f1 != 0) {
         f2 = fork();

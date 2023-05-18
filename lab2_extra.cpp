@@ -87,7 +87,7 @@ int main() {
     vector<thread> producers;
     vector<thread> consumers;
     for (int i = 0; i < producer_count; ++i) {
-        // 在生产者群组中添加生产者线程。
+        // 在生产者群组中添加生产者线程。 
         producers.emplace_back(thread([=, &plate]() {
             int num = i;
             while (true) {

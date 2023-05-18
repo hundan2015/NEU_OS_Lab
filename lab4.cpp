@@ -1,16 +1,16 @@
-#include <iostream>
-#include <vector>
 #include <unistd.h>
 #include <wait.h>
-#include <queue>
+
+#include <iostream>
 #include <map>
+#include <queue>
+#include <vector>
 #define RANDROUND(a, b) (rand() % (b - a + 1)) + a
 using namespace std;
 const int generate_count = 100;
 const int container_size = 3;
 
-void Fifo(vector<int> &access_series)
-{
+void Fifo(vector<int> &access_series) {
     int disefficient = 0;
     int total_instruction = 0;
     queue<int> container;
@@ -18,24 +18,19 @@ void Fifo(vector<int> &access_series)
     // 误，因此是个map。其实这里可以抽象成一个类。但是因为代码量过于少因此使用了
     // 面向过程的方式。
     map<int, int> table_count;
-    for (auto &i : access_series)
-    {
+    for (auto &i : access_series) {
         total_instruction++;
         auto iter = table_count.find(i);
-        if (iter == table_count.end())
-        {
+        if (iter == table_count.end()) {
             cout << "FIFO:Push " << i << endl;
             table_count.insert(make_pair(i, 1));
             container.push(i);
             disefficient++;
-        }
-        else
-        {
+        } else {
             iter->second++;
         }
 
-        if (table_count.size() > container_size)
-        {
+        if (table_count.size() > container_size) {
             cout << "FIFO:Full!" << endl;
             auto front_iter = table_count.find(container.front());
             /* while (front_iter->second != 1)
@@ -55,8 +50,7 @@ void Fifo(vector<int> &access_series)
     cout << endl;
 }
 
-void Random(vector<int> &access_series)
-{
+void Random(vector<int> &access_series) {
     int disefficient = 0;
     int total_instruction = 0;
     queue<int> container;
@@ -64,28 +58,22 @@ void Random(vector<int> &access_series)
     // 误，因此是个map。其实这里可以抽象成一个类。但是因为代码量过于少因此使用了
     // 面向过程的方式。
     map<int, int> table_count;
-    for (auto &i : access_series)
-    {
+    for (auto &i : access_series) {
         total_instruction++;
         auto iter = table_count.find(i);
-        if (iter == table_count.end())
-        {
+        if (iter == table_count.end()) {
             cout << "RANDOM:Push " << i << endl;
             table_count.insert(make_pair(i, 1));
             disefficient++;
-        }
-        else
-        {
+        } else {
             iter->second++;
         }
 
-        if (table_count.size() > container_size)
-        {
+        if (table_count.size() > container_size) {
             cout << "RANDOM:Full!" << endl;
             int random = RANDROUND(0, container_size - 1);
             auto iter = table_count.begin();
-            for (int i = 0; i < random; ++i)
-            {
+            for (int i = 0; i < random; ++i) {
                 iter++;
             }
             cout << "Random:Pop " << iter->first << endl;
@@ -98,39 +86,30 @@ void Random(vector<int> &access_series)
     cout << endl;
 }
 
-void Lru(vector<int> &access_series)
-{
+void Lru(vector<int> &access_series) {
     int disefficient = 0;
     int total_instruction = 0;
     map<int, int> table_count;
-    for (auto &i : access_series)
-    {
+    for (auto &i : access_series) {
         total_instruction++;
-        for (auto &iter_inner : table_count)
-        {
+        for (auto &iter_inner : table_count) {
             iter_inner.second++;
         }
         auto iter = table_count.find(i);
-        if (iter == table_count.end())
-        {
+        if (iter == table_count.end()) {
             cout << "LRU:Insert " << i << endl;
             table_count.insert(make_pair(i, 0));
             disefficient++;
-        }
-        else
-        {
+        } else {
             iter->second--;
         }
 
-        if (table_count.size() > container_size)
-        {
+        if (table_count.size() > container_size) {
             cout << "LRU:Full!" << endl;
             int max_data = -1;
             int max_count = -1;
-            for (auto &i : table_count)
-            {
-                if (i.second > max_count)
-                {
+            for (auto &i : table_count) {
+                if (i.second > max_count) {
                     max_data = i.first;
                     max_count = i.second;
                 }
@@ -145,16 +124,14 @@ void Lru(vector<int> &access_series)
     cout << endl;
 }
 
-void MainShit()
-{
+void MainShit() {
     // Main thread.
     auto fifo_wait = wait(nullptr);
     auto lru_wait = wait(nullptr);
     cout << "Two child over." << endl;
 }
 
-int main()
-{
+int main() {
     cout << "shit" << endl;
     // Belady sequence. 3->0.75;4->0.83
     vector<int> access_series = {4, 3, 2, 1, 4, 3, 5, 4, 3, 2, 1, 5};
@@ -162,31 +139,24 @@ int main()
     {
         access_series.push_back(RANDROUND(1, 100));
     } */
-    for (auto i : access_series)
-    {
+    for (auto i : access_series) {
         cout << i << " ";
     }
     cout << endl;
     auto fifo = fork();
     int lru = -1;
-    if (fifo != 0)
-    {
+    if (fifo != 0) {
         lru = fork();
-        if (lru != 0)
-        {
+        if (lru != 0) {
             /* wait(nullptr);
             wait(nullptr);
             Fifo(access_series); */
             MainShit();
-        }
-        else
-        {
+        } else {
             Lru(access_series);
             Random(access_series);
         }
-    }
-    else
-    {
+    } else {
         Fifo(access_series);
     }
 }
